@@ -1,163 +1,190 @@
-const questions = [
-    { "text": "1. Jennifer, ________?", "options": ["are it you?", "is they you?", "is it you?", "is you?"], "correctIndex": 2 },
-    { "text": "2. You have _________ therapeutic massage", "options": ["50-minute", "50 minutes", "a 50 minutes", "a 50-minute"], "correctIndex": 3 },
-    { "text": "3. Do you _________________ before the session?", "options": ["go to the toilet", "need go to toilet", "need to go to toilet", "need to go to the toilet"], "correctIndex": 3 },
-    { "text": "4. Before we start, I need  ___________  your    body.", "options": ["information about", "some  information", "information", "some information about"], "correctIndex": 3 },
-    { "text": "5. This is _________.", "options": ["massage room", "your massage room", "room massage", "your room massage"], "correctIndex": 1 },
-    { "text": "6. Could you please __________? We don't want it to get dirty or damaged during the session.", "options": ["remove watch", "to remove your watch", "remove your watch", "remove my watch"], "correctIndex": 2 },
-    { "text": "7. You can leave  ________ here.", "options": ["things", "your thing", "your things", "my things"], "correctIndex": 2 },
-    { "text": "8. This ______ you.", "options": ["tower is for", "towel is for", "towel is mine", "towel is beautiful"], "correctIndex": 1 },
-    { "text": "9. Please _________ and cover yourself.", "options": ["lie face down", "face-down", "face down", "lie face-down"], "correctIndex": 0 },
-    { "text": "10. _____ comfortable for you?", "options": ["Is", "Is it", "It", "Are it"], "correctIndex": 1 },
-    { "text": "11. Would you like ____, medium, or light pressure?", "options": ["strong", "firm", "medium", "light"], "correctIndex": 1 },
-    { "text": "12. I am starting now. ___________ something, please tell me.", "options": ["Need", "If need", "If you need to", "If you need"], "correctIndex": 3 },
-    { "text": "13. __ pressure ok for you?", "options": ["Is", "It", "Is the", "The"], "correctIndex": 2 },
-    { "text": "14. Can you please  ________?", "options": ["turn over", "turnover", "turn", "turn me over"], "correctIndex": 0 },
-    { "text": "15. Now, I _______ that.", "options": ["change", "will change", "will", "changed"], "correctIndex": 1 },
-    { "text": "16. We _________.", "options": ["finished", "finish", "are finish", "are finished"], "correctIndex": 3 },
-    { "text": "17. You can  ________.", "options": ["get up slow", "get slowly", "get slow", "get up slowly"], "correctIndex": 3 },
-    { "text": "18. _____ welcome!", "options": ["You are", "Are", "You is", "It is"], "correctIndex": 0 },
-    { "text": "19. I _______ you outside.", "options": ["will see to", "will see", "to see", "I go see to"], "correctIndex": 1 },
-    { "text": "20. _________  feeling now?", "options": ["How are", "How are you", "Are you", "You are"], "correctIndex": 1 },
-    { "text": "21. ________________ water?", "options": ["Would you like", "Would you to like some", "Would you like some", "Do you want some"], "correctIndex": 2 },
-    { "text": "22. Ok, _____________ you.", "options": ["for", "is for", "this is", "this is for you"], "correctIndex": 3 },
-    { "text": "23. ________________ , or is it just for relaxation?", "options": ["Do you have pain", "You have any pain", "Have any pain", "Do you have any pain"], "correctIndex": 3 },
-    { "text": "24. __________________ only on your back, or back and a little leg?", "options": ["You like me work", "Would you like me work", "Would you like me to work", "You like me to work"], "correctIndex": 2 }
-];
+// FINAL CONSOLIDATED SCRIPT (Native TTS)
+
+// questions loaded from questions.js
+// Default fallback if loading fails
+if (typeof questions === 'undefined') {
+    alert("Error: questions.js not loaded.");
+}
 
 // STATE
 let currentIdx = 0;
-let hearts = 3;
 let score = 0;
-let isProcessing = false;
+let userMistakes = [];
+let availableVoices = [];
+let isFeedbackShown = false;
 
 // ELEMENTS
-const elContainer = document.getElementById('game-container');
-const elStartScreen = document.getElementById('start-screen');
-const elGameOverScreen = document.getElementById('game-over-screen');
-const elVictoryScreen = document.getElementById('victory-screen');
-const elFeedbackOverlay = document.getElementById('feedback-overlay');
-const elFeedbackText = document.getElementById('feedback-text');
+const elApp = document.getElementById('app-container');
+const elStart = document.getElementById('start-screen');
+const elResults = document.getElementById('results-screen');
+const elFeedback = document.getElementById('feedback-overlay');
+const elOpts = document.getElementById('options-area');
+const elQ = document.getElementById('q-text');
 
-const elHearts = document.getElementById('hearts-display');
-const elLevel = document.getElementById('level-display');
-const elScore = document.getElementById('score-display');
+// INIT
+window.speechSynthesis.onvoiceschanged = () => {
+    availableVoices = window.speechSynthesis.getVoices();
+};
 
-const elQuestionText = document.getElementById('q-text');
-const elOptionsArea = document.getElementById('options-area');
+document.getElementById('btn-start').onclick = startLesson;
+document.getElementById('btn-restart').onclick = startLesson;
+document.getElementById('btn-next').onclick = nextQuestion;
+document.getElementById('btn-replay-fb').onclick = () => {
+    const q = questions[currentIdx];
+    speak(constructSentence(q.text, q.options[q.correctIndex], true));
+};
+document.getElementById('btn-speak-q').onclick = () => speak(clean(questions[currentIdx].text));
 
-// BUTTONS
-document.getElementById('btn-start').onclick = startGame;
-document.getElementById('btn-restart').onclick = startGame;
-document.getElementById('btn-play-again').onclick = startGame;
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') {
+        if (!elStart.classList.contains('hidden')) startLesson();
+        else if (!elResults.classList.contains('hidden')) startLesson();
+        else if (isFeedbackShown) nextQuestion();
+    }
+});
 
-function startGame() {
+function startLesson() {
     currentIdx = 0;
-    hearts = 3;
     score = 0;
-    isProcessing = false;
+    userMistakes = [];
+    isFeedbackShown = false;
 
-    updateHUD();
-    elStartScreen.classList.add('hidden');
-    elGameOverScreen.classList.add('hidden');
-    elVictoryScreen.classList.add('hidden');
-
+    elStart.classList.add('hidden');
+    elResults.classList.add('hidden');
+    elFeedback.classList.add('hidden');
+    updateScore();
     loadQuestion();
-}
-
-function updateHUD() {
-    let hStr = '';
-    for (let i = 0; i < hearts; i++) hStr += '❤️';
-    elHearts.textContent = hStr;
-
-    elLevel.textContent = 'LVL ' + (currentIdx + 1);
-    elScore.textContent = 'SCORE: ' + score;
 }
 
 function loadQuestion() {
     if (currentIdx >= questions.length) {
-        winGame();
+        showResults();
         return;
     }
 
-    isProcessing = false;
     const q = questions[currentIdx];
-    updateHUD();
+    isFeedbackShown = false;
 
-    elQuestionText.textContent = q.text;
-    elOptionsArea.innerHTML = '';
+    // UI Update
+    document.getElementById('progress-fill').style.width = ((currentIdx / questions.length) * 100) + "%";
+    document.getElementById('progress-text').textContent = `${currentIdx + 1} / ${questions.length}`;
+
+    elQ.textContent = q.text;
+    elOpts.innerHTML = '';
+    elFeedback.classList.add('hidden');
 
     q.options.forEach((opt, idx) => {
-        const btn = document.createElement('button');
+        const btn = document.createElement('div');
         btn.className = 'option-btn';
-        btn.textContent = opt;
-        btn.onclick = () => handleAnswer(idx);
-        elOptionsArea.appendChild(btn);
+
+        const txt = document.createElement('span');
+        txt.textContent = opt;
+
+        const spk = document.createElement('button');
+        spk.className = 'btn-mini-speak';
+        spk.textContent = '🔊';
+        spk.title = "Listen";
+        spk.onclick = (e) => { e.stopPropagation(); speak(opt); };
+
+        btn.appendChild(txt);
+        btn.appendChild(spk);
+
+        btn.onclick = () => handleAnswer(idx, btn);
+        elOpts.appendChild(btn);
     });
 }
 
-function handleAnswer(selectedIndex) {
-    if (isProcessing) return;
-    isProcessing = true;
+function handleAnswer(idx, btn) {
+    if (isFeedbackShown) return;
+
+    const all = document.querySelectorAll('.option-btn');
+    all.forEach(b => { b.classList.add('disabled'); b.onclick = null; });
 
     const q = questions[currentIdx];
-    const isCorrect = (selectedIndex === q.correctIndex);
+    const isCorrect = (idx === q.correctIndex);
+    const correctText = q.options[q.correctIndex];
+
+    const fullTextSpeak = constructSentence(q.text, correctText, true);
+    const fullTextShow = constructSentence(q.text, correctText, false);
 
     if (isCorrect) {
-        score += 100;
-        playSound('correct');
-        showFeedback(true);
-        setTimeout(() => {
-            currentIdx++;
-            loadQuestion();
-        }, 1200);
+        score++;
+        btn.classList.add('correct');
+        showFeedback(true, "Correct!", fullTextShow);
+        speak("Correct! " + fullTextSpeak);
     } else {
-        hearts--;
-        updateHUD();
-        playSound('wrong');
-        elContainer.classList.add('shake');
-        setTimeout(() => elContainer.classList.remove('shake'), 500);
+        btn.classList.add('wrong');
+        all[q.correctIndex].classList.add('correct');
+        showFeedback(false, "Incorrect", fullTextShow);
+        speak("Incorrect. " + fullTextSpeak);
 
-        showFeedback(false);
+        userMistakes.push({ q: q.text, user: q.options[idx], ans: correctText });
+    }
 
-        if (hearts <= 0) {
-            setTimeout(gameOver, 1200);
-        } else {
-            // Give them a moment to realize they were wrong, then let them try again?
-            // "Don't lose all hearts" implies you can fail.
-            // In typical games, you might retry the same question or fail the level.
-            // Let's allow retry on same question until hearts fail.
-            setTimeout(() => {
-                isProcessing = false;
-            }, 1200);
-        }
+    updateScore();
+    isFeedbackShown = true;
+}
+
+function showFeedback(isCorrect, title, body) {
+    elFeedback.classList.remove('hidden');
+    document.getElementById('feedback-title').textContent = title;
+    document.getElementById('feedback-title').style.color = isCorrect ? 'var(--accent-green)' : 'var(--accent-red)';
+    document.getElementById('feedback-body').innerHTML = body;
+    document.getElementById('feedback-icon').textContent = isCorrect ? '🎉' : '❌';
+}
+
+function nextQuestion() {
+    currentIdx++;
+    loadQuestion();
+}
+
+function showResults() {
+    elResults.classList.remove('hidden');
+    const pct = Math.round((score / questions.length) * 100);
+    document.getElementById('final-pct').textContent = `${pct}%`;
+    document.getElementById('final-msg').textContent = `You answered ${score}/${questions.length} correctly.`;
+
+    const list = document.getElementById('review-list');
+    list.innerHTML = '';
+
+    if (userMistakes.length === 0) list.innerHTML = "<p>Perfect! No mistakes.</p>";
+    else {
+        userMistakes.forEach(m => {
+            const d = document.createElement('div');
+            d.className = 'review-item';
+            d.innerHTML = `<div class='review-q'>${m.q}</div><div class='review-a'>You: ${m.user}</div><div class='review-c'>Ans: ${m.ans}</div>`;
+            list.appendChild(d);
+        });
     }
 }
 
-function showFeedback(isCorrect) {
-    elFeedbackText.textContent = isCorrect ? 'PERFECT!' : 'WRONG!';
-    elFeedbackText.className = 'feedback-msg ' + (isCorrect ? 'correct-msg' : 'wrong-msg');
-    elFeedbackOverlay.classList.add('active');
-
-    setTimeout(() => {
-        elFeedbackOverlay.classList.remove('active');
-    }, 1000);
+function updateScore() {
+    document.getElementById('score').textContent = score;
 }
 
-function gameOver() {
-    elGameOverScreen.classList.remove('hidden');
-    document.getElementById('final-score-text').textContent = 'You reached Question ' + (currentIdx + 1) + '\nFinal Score: ' + score;
-}
+// LOGIC HELPERS
+function clean(t) { return t.replace(/^\d+\.\s+/, '').replace(/_{2,}/g, 'blank'); }
 
-function winGame() {
-    elVictoryScreen.classList.remove('hidden');
-    document.getElementById('victory-text').textContent = 'You answered all 24 questions!\nTotal Score: ' + score;
-}
-
-function playSound(type) {
-    const audio = document.getElementById(type === 'correct' ? 'snd-correct' : 'snd-wrong');
-    if (audio) {
-        audio.currentTime = 0;
-        audio.play().catch(e => console.log('Audio autoplay blocked', e));
+function constructSentence(q, a, isSpeech) {
+    let t = q.replace(/^\d+\.\s+/, '');
+    if (/_{2,}/.test(t)) {
+        return isSpeech ? t.replace(/_{2,}/, a) : t.replace(/_{2,}/, ` <strong>${a}</strong> `);
     }
+    return isSpeech ? (t + " " + a) : (t + ` <strong>${a}</strong>`);
+}
+
+function speak(text) {
+    window.speechSynthesis.cancel();
+    const u = new SpeechSynthesisUtterance(text);
+    u.lang = 'en-US';
+    u.rate = 0.9;
+
+    // Try to find a good voice
+    const voices = window.speechSynthesis.getVoices();
+    const preferred = voices.find(v => v.name.includes('Google US English')) ||
+        voices.find(v => v.name.includes('Zira')) ||
+        voices.find(v => v.lang.startsWith('en'));
+    if (preferred) u.voice = preferred;
+
+    window.speechSynthesis.speak(u);
 }

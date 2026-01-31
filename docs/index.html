@@ -4,62 +4,92 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Massage Therapy Quest</title>
-    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Roboto:wght@400;700&display=swap"
-        rel="stylesheet">
+    <title>English for Massage Therapy</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
 
-    <div id="game-container">
-        <!-- HUD -->
-        <div class="hud">
-            <div class="level-info" id="level-display">LVL 1</div>
-            <div class="hearts" id="hearts-display">❤️❤️❤️</div>
-            <div class="score-info" id="score-display">SCORE: 0</div>
-        </div>
-
-        <!-- Gameplay Area -->
-        <div class="content" id="gameplay-area">
-            <div class="question-card">
-                <div class="question-text" id="q-text">Ready?</div>
-                <div class="options-grid" id="options-area"></div>
+    <div id="app-container">
+        <!-- Header -->
+        <header>
+            <div class="progress-bar-bg">
+                <div class="progress-bar-fill" id="progress-fill"></div>
             </div>
-        </div>
+            <div class="header-info">
+                <span id="progress-text">1 / 23</span>
+                <span class="score-badge">Score: <span id="score">0</span></span>
+            </div>
+        </header>
+
+        <!-- Main Area -->
+        <main>
+            <!-- Question -->
+            <div class="question-area" id="question-card">
+                <div class="question-row">
+                    <button class="btn-audio-lg" id="btn-speak-q">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                            <path
+                                d="M14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77zm-4 0h-2.5l-5 5H2v7.58h.5l5 5H10V3.23z" />
+                        </svg>
+                        Listen
+                    </button>
+                    <h2 id="q-text">Loading...</h2>
+                </div>
+            </div>
+
+            <!-- Options -->
+            <div class="options-grid" id="options-area">
+                <!-- Buttons injected here -->
+            </div>
+        </main>
 
         <!-- Feedback Overlay -->
-        <div id="feedback-overlay" class="overlay">
-            <div class="feedback-msg" id="feedback-text"></div>
+        <div id="feedback-overlay" class="feedback-panel hidden">
+            <div class="feedback-content">
+                <div id="feedback-icon" class="fb-icon"></div>
+                <div>
+                    <h3 id="feedback-title">Correct!</h3>
+                    <div id="feedback-body">Body text</div>
+                </div>
+            </div>
+            <div class="feedback-actions">
+                <!-- Replay Audio Button -->
+                <button class="btn-icon-secondary" id="btn-replay-fb">🔊</button>
+                <button class="btn-primary" id="btn-next">Continue ↵</button>
+            </div>
         </div>
 
         <!-- Start Screen -->
         <div id="start-screen" class="screen">
-            <div class="title">MASSAGE THERAPY<br>QUEST</div>
-            <p style="margin-bottom: 40px; font-size: 18px;">Test your English skills!<br>Don't lose all your hearts!
-            </p>
-            <button class="start-btn" id="btn-start">START GAME</button>
+            <div class="content-box">
+                <h1>Massage Therapy<br>English Lesson</h1>
+                <p>23 Questions • Voice Enabled</p>
+                <button class="btn-primary btn-lg" id="btn-start">Start Lesson</button>
+            </div>
         </div>
 
-        <!-- Game Over Screen -->
-        <div id="game-over-screen" class="screen hidden">
-            <div class="title" style="color: #e94560;">GAME OVER</div>
-            <p id="final-score-text" style="margin-bottom: 30px; font-size: 20px;"></p>
-            <button class="start-btn" id="btn-restart">TRY AGAIN</button>
-        </div>
+        <!-- Results Screen -->
+        <div id="results-screen" class="screen hidden">
+            <div class="content-box results-box">
+                <h1>Lesson Complete</h1>
+                <div class="final-score-big">
+                    <span id="final-pct">100%</span>
+                </div>
+                <p id="final-msg">You answered 23/23 correctly.</p>
 
-        <!-- Victory Screen -->
-        <div id="victory-screen" class="screen hidden">
-            <div class="title" style="color: #4cc9f0;">QUEST COMPLETE!</div>
-            <p id="victory-text" style="margin-bottom: 30px; font-size: 20px;"></p>
-            <button class="start-btn" id="btn-play-again">PLAY AGAIN</button>
+                <div class="review-box" id="review-list">
+                    <!-- Mistakes list -->
+                </div>
+
+                <button class="btn-primary btn-lg" id="btn-restart">Retake Lesson</button>
+            </div>
         </div>
     </div>
 
-    <!-- Audio Effects -->
-    <audio id="snd-correct" src="https://assets.mixkit.co/active_storage/sfx/2000/2000-preview.mp3"></audio>
-    <audio id="snd-wrong" src="https://assets.mixkit.co/active_storage/sfx/2003/2003-preview.mp3"></audio>
-
+    <!-- Data & Script -->
+    <script src="questions.js"></script>
     <script src="script.js"></script>
 </body>
 
