@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Massage Therapy Quest</title>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Roboto:wght@400;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <div id="game-container">
+        <!-- HUD -->
+        <div class="hud">
+            <div class="level-info" id="level-display">LVL 1</div>
+            <div class="hearts" id="hearts-display">❤️❤️❤️</div>
+            <div class="score-info" id="score-display">SCORE: 0</div>
+        </div>
+
+        <!-- Gameplay Area -->
+        <div class="content" id="gameplay-area">
+            <div class="question-card">
+                <div class="question-text" id="q-text">Ready?</div>
+                <div class="options-grid" id="options-area"></div>
+            </div>
+        </div>
+
+        <!-- Feedback Overlay -->
+        <div id="feedback-overlay" class="overlay">
+            <div class="feedback-msg" id="feedback-text"></div>
+        </div>
+
+        <!-- Start Screen -->
+        <div id="start-screen" class="screen">
+            <div class="title">MASSAGE THERAPY<br>QUEST</div>
+            <p style="margin-bottom: 40px; font-size: 18px;">Test your English skills!<br>Don't lose all your hearts!
+            </p>
+            <button class="start-btn" id="btn-start">START GAME</button>
+        </div>
+
+        <!-- Game Over Screen -->
+        <div id="game-over-screen" class="screen hidden">
+            <div class="title" style="color: #e94560;">GAME OVER</div>
+            <p id="final-score-text" style="margin-bottom: 30px; font-size: 20px;"></p>
+            <button class="start-btn" id="btn-restart">TRY AGAIN</button>
+        </div>
+
+        <!-- Victory Screen -->
+        <div id="victory-screen" class="screen hidden">
+            <div class="title" style="color: #4cc9f0;">QUEST COMPLETE!</div>
+            <p id="victory-text" style="margin-bottom: 30px; font-size: 20px;"></p>
+            <button class="start-btn" id="btn-play-again">PLAY AGAIN</button>
+        </div>
+    </div>
+
+    <!-- Audio Effects -->
+    <audio id="snd-correct" src="https://assets.mixkit.co/active_storage/sfx/2000/2000-preview.mp3"></audio>
+    <audio id="snd-wrong" src="https://assets.mixkit.co/active_storage/sfx/2003/2003-preview.mp3"></audio>
+
+    <script src="script.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,278 @@
+body {
+    margin: 0;
+    padding: 0;
+    background-color: #1a1a2e;
+    color: #fff;
+    font-family: 'Roboto', sans-serif;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    user-select: none;
+}
+
+/* Retro Game UI container */
+#game-container {
+    width: 780px;
+    height: 580px;
+    background: linear-gradient(135deg, #16213e 0%, #0f3460 100%);
+    border: 4px solid #e94560;
+    border-radius: 12px;
+    position: relative;
+    box-shadow: 0 0 20px rgba(233, 69, 96, 0.5);
+    overflow: hidden;
+    max-width: 100%;
+}
+
+/* HUD */
+.hud {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 60px;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 20px;
+    border-bottom: 2px solid #e94560;
+    font-family: 'Press Start 2P', cursive;
+    font-size: 14px;
+    z-index: 10;
+}
+
+.hearts {
+    color: #ff0000;
+    font-size: 24px;
+    letter-spacing: 5px;
+}
+
+.level-info {
+    color: #4cc9f0;
+}
+
+.score-info {
+    color: #f72585;
+}
+
+/* Content Area */
+.content {
+    position: absolute;
+    top: 60px;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    text-align: center;
+}
+
+/* Question Card with Glassmorphism */
+.question-card {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    padding: 30px;
+    border-radius: 16px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    max-width: 600px;
+    width: 100%;
+    animation: float 6s ease-in-out infinite;
+}
+
+@keyframes float {
+    0% {
+        transform: translateY(0px);
+    }
+
+    50% {
+        transform: translateY(-10px);
+    }
+
+    100% {
+        transform: translateY(0px);
+    }
+}
+
+.question-text {
+    font-size: 24px;
+    margin-bottom: 30px;
+    line-height: 1.4;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.options-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+}
+
+.option-btn {
+    background: rgba(15, 52, 96, 0.8);
+    border: 2px solid #4cc9f0;
+    color: #fff;
+    padding: 15px;
+    border-radius: 8px;
+    font-size: 16px;
+    font-family: 'Roboto', sans-serif;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.2s;
+    position: relative;
+    overflow: hidden;
+}
+
+.option-btn:hover {
+    background: #4cc9f0;
+    color: #0f3460;
+    transform: scale(1.02);
+    box-shadow: 0 0 15px rgba(76, 201, 240, 0.6);
+}
+
+.option-btn:active {
+    transform: scale(0.98);
+}
+
+/* Feedback Animations */
+.overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 0, 0, 0.8);
+    z-index: 100;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s;
+}
+
+.overlay.active {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.feedback-msg {
+    font-family: 'Press Start 2P', cursive;
+    font-size: 48px;
+    text-transform: uppercase;
+    animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.correct-msg {
+    color: #4cc9f0;
+    text-shadow: 0 0 20px #4cc9f0;
+}
+
+.wrong-msg {
+    color: #e94560;
+    text-shadow: 0 0 20px #e94560;
+}
+
+@keyframes popIn {
+    0% {
+        transform: scale(0);
+    }
+
+    100% {
+        transform: scale(1);
+    }
+}
+
+/* Screen Shake */
+.shake {
+    animation: shake 0.5s cubic-bezier(.36, .07, .19, .97) both;
+}
+
+@keyframes shake {
+
+    10%,
+    90% {
+        transform: translate3d(-4px, 0, 0);
+    }
+
+    20%,
+    80% {
+        transform: translate3d(8px, 0, 0);
+    }
+
+    30%,
+    50%,
+    70% {
+        transform: translate3d(-16px, 0, 0);
+    }
+
+    40%,
+    60% {
+        transform: translate3d(16px, 0, 0);
+    }
+}
+
+/* Screens (Start/End) */
+.screen {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(22, 33, 62, 0.95);
+    z-index: 50;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+
+.title {
+    font-family: 'Press Start 2P', cursive;
+    font-size: 32px;
+    color: #e94560;
+    margin-bottom: 20px;
+    line-height: 1.5;
+    text-shadow: 4px 4px 0px #0f3460;
+}
+
+.start-btn {
+    background: #e94560;
+    color: #fff;
+    border: none;
+    padding: 20px 40px;
+    font-family: 'Press Start 2P', cursive;
+    font-size: 16px;
+    cursor: pointer;
+    box-shadow: 4px 4px 0px #000;
+    transition: transform 0.1s;
+    animation: pulse 1.5s infinite;
+}
+
+.start-btn:active {
+    transform: translate(4px, 4px);
+    box-shadow: 0px 0px 0px #000;
+}
+
+@keyframes pulse {
+    0% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.05);
+    }
+
+    100% {
+        transform: scale(1);
+    }
+}
+
+.hidden {
+    display: none !important;
+}
