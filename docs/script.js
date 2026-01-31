@@ -1,10 +1,31 @@
 // FINAL CONSOLIDATED SCRIPT (Native TTS)
 
-// questions loaded from questions.js
-// Default fallback if loading fails
-if (typeof questions === 'undefined') {
-    alert("Error: questions.js not loaded.");
-}
+// INLINED DATA - Solving the GitHub Pages loading error
+const questions = [
+    { "text": "1. Jennifer, ________?", "options": ["are it you?", "is they you?", "is it you?", "is you?"], "correctIndex": 2 },
+    { "text": "2. You have _________ therapeutic massage", "options": ["50-minute", "50 minutes", "a 50 minutes", "a 50-minute"], "correctIndex": 3 },
+    { "text": "3. Do you _________________ before the session?", "options": ["go to the toilet", "need go to toilet", "need to go to toilet", "need to go to the toilet"], "correctIndex": 3 },
+    { "text": "4. Before we start, I need ___________ your body.", "options": ["information about", "some information", "information", "some information about"], "correctIndex": 3 },
+    { "text": "5. This is _________.", "options": ["massage room", "your massage room", "room massage", "your room massage"], "correctIndex": 1 },
+    { "text": "6. Could you please __________? We don't want it to get dirty or damaged during the session.", "options": ["remove watch", "to remove your watch", "remove your watch", "remove my watch"], "correctIndex": 2 },
+    { "text": "7. You can leave ________ here.", "options": ["things", "your thing", "your things", "my things"], "correctIndex": 2 },
+    { "text": "8. This ______ you.", "options": ["tower is for", "towel is for", "towel is mine", "towel is beautiful"], "correctIndex": 1 },
+    { "text": "9. _____ comfortable for you?", "options": ["Is", "Is it", "It", "Are it"], "correctIndex": 1 },
+    { "text": "10. Would you like ____, medium, or light pressure?", "options": ["strong", "firm", "medium", "light"], "correctIndex": 1 },
+    { "text": "11. I am starting now. ___________ something, please tell me.", "options": ["Need", "If need", "If you need to", "If you need"], "correctIndex": 3 },
+    { "text": "12. __ pressure ok for you?", "options": ["Is", "It", "Is the", "The"], "correctIndex": 2 },
+    { "text": "13. Can you please ________?", "options": ["turn over", "turnover", "turn", "turn me over"], "correctIndex": 0 },
+    { "text": "14. Now, I _______ that.", "options": ["change", "will change", "will", "changed"], "correctIndex": 1 },
+    { "text": "15. We _________.", "options": ["finished", "finish", "are finish", "are finished"], "correctIndex": 3 },
+    { "text": "16. You can ________.", "options": ["get up slow", "get slowly", "get slow", "get up slowly"], "correctIndex": 3 },
+    { "text": "17. _____ welcome!", "options": ["You are", "Are", "You is", "It is"], "correctIndex": 0 },
+    { "text": "18. I _______ you outside.", "options": ["will see to", "will see", "to see", "I go see to"], "correctIndex": 1 },
+    { "text": "19. _________ feeling now?", "options": ["How are", "How are you", "Are you", "You are"], "correctIndex": 1 },
+    { "text": "20. ________________ water?", "options": ["Would you like", "Would you to like some", "Would you like some", "Do you want some"], "correctIndex": 2 },
+    { "text": "21. Ok, _____________ you.", "options": ["for", "is for", "this is", "this is for you"], "correctIndex": 3 },
+    { "text": "22. ________________ , or is it just for relaxation?", "options": ["Do you have pain", "You have any pain", "Have any pain", "Do you have any pain"], "correctIndex": 3 },
+    { "text": "23. __________________ only on your back, or back and a little leg?", "options": ["You like me work", "Would you like me work", "Would you like me to work", "You like me to work"], "correctIndex": 2 }
+];
 
 // STATE
 let currentIdx = 0;
